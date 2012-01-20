@@ -20,6 +20,12 @@ app.get('/', function(_, res) {
 });
 
 
+app.get('/ping', function(_, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('pong\n');
+});
+
+
 // Proxy all requests from /couch/* to the root of the couch host
 app.all('/couch/*', function(req, res) {
   var url = couchUrl + req.url.slice(7);
@@ -52,12 +58,12 @@ app.get('/user/:id/', function(_, res) {
 app.get('/user/:id/:db/', function(req, res){
   request.get({
     headers: {'Cookie': req.headers.cookie || ''},
-    uri: couchUrl + 'upmock-' + req.params[1]
+    uri: couchUrl + 'upmock-' + req.params.id
   }, function(err, resp, body) {
-    if (resp.statusCode === 401) {
+    if (resp.statusCode !== 200) {
       res.sendfile(__dirname + '/public/index.html');
     } else {
-      res.sendfile(__dirname + '/public/upmock-client/index.html');
+      res.sendfile(__dirname + '/public/upmock.html');
     }
   });
 });
