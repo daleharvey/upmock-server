@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8" />
+
+    <title>upmock</title>
+    <link rel="stylesheet" href="/style/main.css">
+
+  </head>
+
+  <body>
+
+    <h1>upmock (Beta)</h1>
+
+    <div id="user_panel">
+
+    </div>
+
+    <script type="text/html" id="logged_out_tpl">
+
+      <div id="login_wrapper">
+        <h2>Login</h2>
+        <form action="#login" id="login">
+          <label for="login_username">Username:</label>
+          <input type="text" name="username" />
+          <label for="login_username">Password:</label>
+          <input type="password" name="password" />
+          <input type="submit" value="Login" />
+        </form>
+      </div>
+
+      <div id="register_wrapper">
+        <h2>Register</h2>
+        <form action="#register" id="register">
+          <label for="register_username">Username:</label>
+          <input type="text" name="username" />
+          <label for="login_username">Password:</label>
+          <input type="password" name="password" />
+          <label for="confirm_username">Confirm Password:</label>
+          <input type="password" name="confirm_password" />
+          <input type="submit" value="Register" />
+          <p class="subtext">Currently username and passwords can only
+            contain letters, numbera and _, They must be 3 to 20 characters long.</p>
+        </form>
+      </div>
+      <br style="clear:both" />
+    </script>
+
+    <script type="text/html" id="logged_in_tpl">
+
+      Welcome <a href="/user/{{name}}/">{{name}}</a>
+
+      <form action="#logout">
+        <input type="submit" value="Logout" />
+      </form>
+
+    </script>
+
+    <script src="/js/jquery-1.6.min.js"></script>
+    <script src="/js/underscore.js"></script>
+
+    <script src="/js/router.js"></script>
+    <script src="/js/mustache.js"></script>
+
+    <script src="/js/upmock.server.js"></script>
+
+  </body>
+</html>

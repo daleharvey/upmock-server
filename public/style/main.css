@@ -1,0 +1,81 @@
+html,
+body,
+fieldset,
+ul,
+h3 {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    padding:20px;
+    overflow-x:hidden;
+    overflow-y:scroll;
+    background: none repeat scroll 0 0 #333;
+    width: 600px;
+    margin:0 auto;
+}
+
+body,
+p {
+    color: #EEE;
+}
+
+body,
+p,
+select,
+input,
+textarea {
+    font: 1em Helvetica, arial, sans-serif;
+}
+
+h2 {
+    font-weight: normal;
+    margin-top: 0px;
+}
+
+label {
+    margin-top: 15px;
+    display: block;
+}
+#user_panel {
+    background: #222;
+    border:1px solid #666;
+}
+
+#login_wrapper {
+    padding: 20px;
+    width: 259px;
+    float:left;
+}
+#register_wrapper {
+    padding: 20px;
+    width: 258px;
+    float:right;
+    background: #111;
+    border-left:1px solid #666;
+}
+
+input {
+    display: block;
+    margin-top: 5px;
+}
+
+input[type=submit] {
+    display: block;
+    margin-top: 20px;
+    border-radius: 4px;
+    height: 30px;
+    border: 1px solid #666;
+}
+
+.warning {
+    background: red;
+    padding:10px;
+}
+
+.subtext {
+    font-family: verdana;
+    color: #999;
+    font-size: 12px;
+}

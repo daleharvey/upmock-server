@@ -1,0 +1,3 @@
+[submodule "public/upmock-client"]
+	path = public/upmock-client
+	url = git@github.com:daleharvey/upmock-client.git
