@@ -13,8 +13,11 @@ $.ajaxSetup({
   contentType: 'application/json'
 });
 
-var nil = function() { };
+$.couch.urlPrefix = "/couch";
 
+$.couch.db("mydatabase");
+
+var nil = function() { };
 
 // Basic wrapper for localStorage
 var localJSON = (function(){
@@ -35,21 +38,43 @@ var localJSON = (function(){
 })();
 
 
-var Tasks = (function () {
+var LoggedOutView = Trail.View.extend({
+  container: '#content',
+  template: '#logged_out_tpl'
+});
+var LoggedInView = Trail.View.extend({
+  container: '#user',
+  template: '#logged_in_tpl'
+});
 
-  var router = Router();
+var HomeView = Trail.View.extend({
+  container: '#content',
+  template: '#home_tpl',
+  show: function() {
+    var self = this;
+    var db = 'upmock-' + window.UpMock.user.name;
+    $.couch.db(db).allDocs({}).then(function(data) {
+      self.render({data: {saved: data}});
+    });
+  }
+});
 
-  router.post('#logout', function() {
+var UpMock = function() {
+
+  var self = this;
+
+  self.user = false;
+
+  function logout() {
     $.ajax({
       type: 'DELETE',
       url: '/couch/_session'
     }).then(function() {
-      renderUserPanel();
+      document.location.reload();
     });
-  });
+  }
 
-  router.post('#login', function (_, e, details) {
-
+  function login(e, details) {
     var credentials = {
       user: details.username,
       password: details.password
@@ -64,48 +89,82 @@ var Tasks = (function () {
     }).fail(function(data) {
       showWarning('#login_wrapper', "Error Logging in");
     });
-  });
+  }
 
-
-  router.post('#register', function (_, e, details) {
-
+  function register(e, details) {
     var credentials = {
       user: details.username,
       password: details.password,
-      confirm_password: details.confirm_password,
-      init_ui: true,
+      confirm_password: details.confirm_password
     };
 
     $.ajax({
       type: 'POST',
       url: '/register',
-      data: JSON.stringify(credentials),
+      data: JSON.stringify(credentials)
     }).then(function(data) {
       document.location = '/user/' + details.username + '/';
     }).fail(function(data) {
       var obj = JSON.parse(data.responseText);
       showWarning('#register_wrapper', obj.error);
     });
-  });
-
+  }
 
   function showWarning(id, msg) {
     $(".warning").remove();
     $(id).find('form').prepend('<p class="warning">' + msg + '</p>');
   }
 
-
-  function renderUserPanel() {
-    $.get("/couch/_session", function(data) {
-      var tpl = (!data.userCtx.name)
-        ? Mustache.to_html($("#logged_out_tpl").html(), {})
-        : Mustache.to_html($("#logged_in_tpl").html(), {name: data.userCtx.name});
-      $("#user_panel").html(tpl);
-    }, "json");
+  function renderUserPanel(callback) {
   }
 
+  function create(e, details) {
 
-  router.init(window);
-  renderUserPanel();
+    var docName = details.name;
+    var $db = $.couch.db('upmock-' + self.user.name);
+    var url = '/user/' + self.user.name + '/' + docName + '/';
 
-})();
+    $db.openDoc(docName, {error: nil}).then(function() {
+      var html = 'A design with that name already exists, ' +
+        '<a href="' + url + '">open it?</a>';
+      $('<div class="warning">' + html + '</div>').prependTo('#create_upmock');
+    }).fail(function(xhr) {
+      $db.saveDoc({_id: docName}).always(function(doc, _, xhr) {
+        if (xhr.status === 201) {
+          document.location = url;
+        }
+      });
+    });
+  }
+
+  Trail.Router.pre(function(args) {
+    if (args.path === '#login') {
+      return true;
+    }
+
+    if (self.user === false) {
+      LoggedOutView.render();
+      return false;
+    }
+
+    LoggedInView.render({data: self.user});
+    return true;
+  });
+
+  Trail.Router.get(/^#(\/)?$/, HomeView, HomeView.show);
+
+  Trail.Router.post('#create', this, create);
+  Trail.Router.post('#logout', this, logout);
+  Trail.Router.post('#login', this, login);
+  Trail.Router.post('#register', this, register);
+
+
+  $.get("/couch/_session", function(data) {
+    self.user = !data.userCtx.name ? false : {name: data.userCtx.name};
+  }, "json").then(function() {
+    Trail.Router.init();
+  });
+
+};
+
+window.UpMock = new UpMock();
