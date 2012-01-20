@@ -54,7 +54,10 @@ var HomeView = Trail.View.extend({
     var self = this;
     var db = 'upmock-' + window.UpMock.user.name;
     $.couch.db(db).allDocs({}).then(function(data) {
-      self.render({data: {saved: data}});
+      self.render({data: {
+        user: window.UpMock.user,
+        saved: data
+      }});
     });
   }
 });
