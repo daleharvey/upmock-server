@@ -1,15 +1,22 @@
 var config = require('./config').config;
+
+var couchAuthUrl = 'http://' +
+  config.couch.admin.name + ':' + config.couch.admin.pass + '@' +
+  config.couch.host + ':' + config.couch.port;
+
+var couchUrl = 'http://' +
+  config.couch.host + ':' + config.couch.port + '/';
+
+var nano = require('nano')(couchAuthUrl);
+var app = require('express').createServer();
 var http = require('http');
-var request = require('request').defaults({jar: false, json: true});
 var hashlib = require("hashlib");
 var _ = require('underscore');
+var r = require('request').defaults({
+  jar: false,
+  json: true
+});
 
-var couchAuthUrl = 'http://' + config.couch.admin.name + ':' +
-  config.couch.admin.pass + '@' + config.couch.host + ':' + config.couch.port;
-
-var couchUrl = 'http://' + config.couch.host + ':' + config.couch.port + '/';
-
-var app = require('express').createServer();
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -18,27 +25,9 @@ app.configure(function(){
   app.set("view options", { layout: false });
 });
 
-var nano = require('nano')(couchAuthUrl);
 
-
-// Homepage!
 app.get('/', function(_, res) {
   res.render('index.html');
-});
-
-
-// If the request is asking for a valid id, lookup the session to make
-// sure they are logged in (with the right name)
-app.param('userId', function(req, res, next, id) {
-  request.get({
-    uri: couchUrl + '_session',
-    headers: {'cookie': req.headers.cookie || ''}
-  }, function(err, resp, body) {
-    if (resp.statusCode !== 200 || body.userCtx.name !== id) {
-      return res.render('401.html');
-    }
-    next();
-  });
 });
 
 
@@ -46,7 +35,7 @@ app.get('/user/:userId/', function(req, res) {
   nano.request({
     db: 'upmock-' + req.params.userId,
     doc: '_all_docs',
-    headers: {'cookie': req.headers.cookie}
+    headers: {'cookie': req.headers.cookie || ''}
   }, function(err, body) {
     res.render('user.html', {
       user_id: req.params.userId,
@@ -67,7 +56,7 @@ app.get('/user/:userId/:db/', function(req, res){
 // Proxy all requests from /couch/* to the root of the couch host
 app.all('/couch/*', function(req, res) {
   var url = couchUrl + req.url.slice(7);
-  var x = request(url);
+  var x = r(url);
   req.pipe(x);
   x.pipe(res);
 });
@@ -137,6 +126,20 @@ app.get('*', function(req, res) {
 });
 
 
+// If the request is asking for a valid id, lookup the session to make
+// sure they are logged in (with the right name)
+app.param('userId', function(req, res, next, id) {
+  r.get({
+    uri: couchUrl + '_session',
+    headers: {'cookie': req.headers.cookie || ''}
+  }, function(err, resp, body) {
+    if (resp.statusCode !== 200 || body.userCtx.name !== id) {
+      return res.render('401.html');
+    }
+    next();
+  });
+});
+
 
 function reply(client, status, content, hdrs) {
   var headers = _.extend({'Content-Type': 'application/json'}, hdrs);
@@ -146,8 +149,7 @@ function reply(client, status, content, hdrs) {
 
 
 function loginRequest(username, password, callback) {
-  request({
-    method: 'POST',
+  r.post({
     uri: couchUrl + '_session',
     body: 'name=' + username + '&password=' + password,
     headers: {'content-type': 'application/x-www-form-urlencoded' }
