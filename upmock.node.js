@@ -9,20 +9,12 @@ var couchAuthUrl = 'http://' + config.couch.admin.name + ':' +
 
 var couchUrl = 'http://' + config.couch.host + ':' + config.couch.port + '/';
 
-console.log(couchAuthUrl);
-
 var app = require('express').createServer();
 var nano = require('nano')(couchAuthUrl);
 
 // Homepage!
 app.get('/', function(_, res) {
   res.sendfile(__dirname + '/public/index.html');
-});
-
-
-app.get('/ping', function(_, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('pong\n');
 });
 
 
