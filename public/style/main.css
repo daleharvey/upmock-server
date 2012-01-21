@@ -92,3 +92,7 @@ header { position: relative; }
     border:1px solid #555;
     color: #CCC;
 }
+
+h1 a {
+    text-decoration: none;
+}
