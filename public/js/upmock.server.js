@@ -118,9 +118,6 @@ var UpMock = function() {
     $(id).find('form').prepend('<p class="warning">' + msg + '</p>');
   }
 
-  function renderUserPanel(callback) {
-  }
-
   function create(e, details) {
 
     var docName = details.name;
@@ -140,21 +137,21 @@ var UpMock = function() {
     });
   }
 
-  Trail.Router.pre(function(args) {
-    if (args.path === '#login') {
-      return true;
-    }
+  // Trail.Router.pre(function(args) {
+  //   if (args.path === '#login') {
+  //     return true;
+  //   }
 
-    if (self.user === false) {
-      LoggedOutView.render();
-      return false;
-    }
+  //   if (self.user === false) {
+  //     LoggedOutView.render();
+  //     return false;
+  //   }
 
-    LoggedInView.render({data: self.user});
-    return true;
-  });
+  //   LoggedInView.render({data: self.user});
+  //   return true;
+  // });
 
-  Trail.Router.get(/^#(\/)?$/, HomeView, HomeView.show);
+  // Trail.Router.get(/^#(\/)?$/, HomeView, HomeView.show);
 
   Trail.Router.post('#create', this, create);
   Trail.Router.post('#logout', this, logout);
@@ -165,6 +162,12 @@ var UpMock = function() {
   $.get("/couch/_session", function(data) {
     self.user = !data.userCtx.name ? false : {name: data.userCtx.name};
   }, "json").then(function() {
+    var tpl = !!user ? '#logged_in_tpl' : 'logged_out_tpl';
+    $('#user').html($(tpl).html());
+    if (user) {
+      $('#homelink').attr('href', '/user/' + self.user.name + '/')
+        .text(self.user.name);
+    }
     Trail.Router.init();
   });
 

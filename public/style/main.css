@@ -39,7 +39,7 @@ a {
     color: #999;
 }
 
-label {
+#content label {
     margin-top: 15px;
     display: block;
 }
@@ -61,7 +61,7 @@ label {
     border-left:1px solid #666;
 }
 
-#register input[type=submit], #login input[type=submit] {
+#register input[type=submit] {
     display: block;
     margin-top: 15px;
 }
@@ -84,4 +84,11 @@ header { position: relative; }
     bottom: 0px;
     right: 0px;
     float: right;
+}
+
+#user input[type=text], #user input[type=password] {
+    font-size: 12px;
+    background: #444;
+    border:1px solid #555;
+    color: #CCC;
 }

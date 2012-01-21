@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8" />
+
+    <title>upmock</title>
+    <link rel="stylesheet" href="/style/main.css">
+
+  </head>
+
+  <body>
+
+    <header>
+      <div id="user">
+      </div>
+      <h1><a href="/">UpMock (beta)</a></h1>
+    </header>
+
+    <div id="content">
+      <div id="user_panel">
+        <div id="login_wrapper">
+          <h2>Whats UpMock?</h2>
+          <p>UpMock is blah blah blah</p>
+        </div>
+        <div id="register_wrapper">
+          <h2>Register</h2>
+          <form action="#register" id="register">
+            <label for="register_username">Username:</label>
+            <input type="text" name="username" />
+            <label for="login_username">Password:</label>
+            <input type="password" name="password" />
+            <label for="confirm_username">Confirm Password:</label>
+            <input type="password" name="confirm_password" />
+            <input type="submit" value="Register" />
+            <p class="subtext">Currently username and passwords can only
+              contain letters, numbera and _, They must be 3 to 20 characters long.</p>
+          </form>
+        </div>
+        <br style="clear:both" />
+      </div>
+    </div>
+
+  </body>
+
+ <script type="text/html" id="logged_out_tpl">
+    <form action="#login" id="login">
+      <input type="text" name="username" placeholder="username" /><br />
+      <input type="password" name="password" placeholder="password" />
+      <input type="submit" value="Login" />
+    </form>
+  </script>
+
+  <script type="text/html" id="logged_in_tpl">
+    <div>
+      Welcome <a id="homelink" href="/user/{{user_id}}/"></a>
+      <form action="#logout">
+        <input type="submit" value="Logout" />
+      </form>
+    </div>
+  </script>
+
+  <script src="/upmock-client/js/libs/jquery-1.7.1.min.js"></script>
+  <script src="/upmock-client/js/libs/handlebars-1.0.0.beta.4.js"></script>
+  <script src="/upmock-client/js/libs/underscore-min.js"></script>
+  <script src="/upmock-client/js/libs/trail/trail.js"></script>
+
+  <script src="/js/jquery.couch.js"></script>
+  <script src="/js/upmock.server.js"></script>
+
+</html>

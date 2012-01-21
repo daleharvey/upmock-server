@@ -1,6 +1,6 @@
 var config = require('./config').config;
 var http = require('http');
-var request = require('request');
+var request = require('request').defaults({jar: false, json: true});
 var hashlib = require("hashlib");
 var _ = require('underscore');
 
@@ -10,11 +10,57 @@ var couchAuthUrl = 'http://' + config.couch.admin.name + ':' +
 var couchUrl = 'http://' + config.couch.host + ':' + config.couch.port + '/';
 
 var app = require('express').createServer();
+
+app.configure(function(){
+  app.set('views', __dirname + '/views');
+  app.register('.html', require('handlebars'));
+  app.set('view engine', 'handlebars');
+  app.set("view options", { layout: false });
+});
+
 var nano = require('nano')(couchAuthUrl);
+
 
 // Homepage!
 app.get('/', function(_, res) {
-  res.sendfile(__dirname + '/public/index.html');
+  res.render('index.html');
+});
+
+
+// If the request is asking for a valid id, lookup the session to make
+// sure they are logged in (with the right name)
+app.param('userId', function(req, res, next, id) {
+  request.get({
+    uri: couchUrl + '_session',
+    headers: {'cookie': req.headers.cookie || ''}
+  }, function(err, resp, body) {
+    if (resp.statusCode !== 200 || body.userCtx.name !== id) {
+      return res.render('401.html');
+    }
+    next();
+  });
+});
+
+
+app.get('/user/:userId/', function(req, res) {
+  nano.request({
+    db: 'upmock-' + req.params.userId,
+    doc: '_all_docs',
+    headers: {'cookie': req.headers.cookie}
+  }, function(err, body) {
+    res.render('user.html', {
+      user_id: req.params.userId,
+      saved: body
+    });
+  });
+});
+
+
+// Serves the main application index.html, this path needs a check
+// for auth errrors to give the user a login screen if they arent
+// logged in
+app.get('/user/:userId/:db/', function(req, res){
+  res.sendfile(__dirname + '/public/upmock.html');
 });
 
 
@@ -36,27 +82,6 @@ app.post('/login', function(req, client) {
         reply(client, 200, {ok: true}, {'Set-Cookie': res.headers['set-cookie']});
       }
     });
-  });
-});
-
-
-app.get('/user/:id/', function(_, res) {
-  res.sendfile(__dirname + '/public/index.html');
-});
-
-// Serves the main application index.html, this path needs a check
-// for auth errrors to give the user a login screen if they arent
-// logged in
-app.get('/user/:id/:db/', function(req, res){
-  request.get({
-    headers: {'Cookie': req.headers.cookie || ''},
-    uri: couchUrl + 'upmock-' + req.params.id
-  }, function(err, resp, body) {
-    if (resp.statusCode !== 200) {
-      res.sendfile(__dirname + '/public/index.html');
-    } else {
-      res.sendfile(__dirname + '/public/upmock.html');
-    }
   });
 });
 
