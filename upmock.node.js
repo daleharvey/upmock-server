@@ -65,7 +65,7 @@ app.get('/user/:userId/:db/', function(req, res){
 
 app.delete('/user/:userId/:db/', function(req, res) {
   var userDb = nano.use('upmock-' + req.params.userId);
-  var docName = req.params.db;
+  var docName = encodeURIComponent(req.params.db);
   userDb.get(docName, null, function(err, doc) {
     userDb.destroy(docName, doc._rev, function() {
       return reply(res, 200, {ok: true});
@@ -76,7 +76,7 @@ app.delete('/user/:userId/:db/', function(req, res) {
 
 app.post('/user/:userId/create', function(req, res) {
 
-  var docName = req.body.name;
+  var docName = encodeURIComponent(req.body.name);
   var name = req.user.userCtx.name;
   var userDb = nano.use('upmock-' + name);
 
