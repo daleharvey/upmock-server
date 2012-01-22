@@ -68,16 +68,30 @@ var UpMock = function() {
 
   self.user = false;
 
+  function deleteDoc(e, details) {
+    e.preventDefault();
+    $.ajax({
+      type: 'DELETE',
+      url: '/user/' + window.UpMock.user.name + '/' + details.id + '/',
+      data: ''
+    }).then(function() {
+      $(e.target).parents('li').remove();
+    });
+  }
+
   function logout() {
     $.ajax({
       type: 'DELETE',
       url: '/couch/_session'
     }).then(function() {
-      document.location.reload();
+      document.location.href = '/';
     });
   }
 
   function login(e, details) {
+
+    e.preventDefault();
+
     var credentials = {
       user: details.username,
       password: details.password
@@ -90,7 +104,7 @@ var UpMock = function() {
     }).then(function(data) {
       document.location = '/user/' + details.username + '/';
     }).fail(function(data) {
-      showWarning('#login_wrapper', "Error Logging in");
+      showWarning('#login', "Error Logging in");
     });
   }
 
@@ -109,31 +123,31 @@ var UpMock = function() {
       document.location = '/user/' + details.username + '/';
     }).fail(function(data) {
       var obj = JSON.parse(data.responseText);
-      showWarning('#register_wrapper', obj.error);
+      showWarning('#register', obj.error);
     });
   }
 
   function showWarning(id, msg) {
     $(".warning").remove();
-    $(id).find('form').prepend('<p class="warning">' + msg + '</p>');
+    $('<p class="warning">' + msg + '</p>').prependTo(id);
   }
 
   function create(e, details) {
 
     var docName = details.name;
-    var $db = $.couch.db('upmock-' + self.user.name);
     var url = '/user/' + self.user.name + '/' + docName + '/';
 
-    $db.openDoc(docName, {error: nil}).then(function() {
-      var html = 'A design with that name already exists, ' +
-        '<a href="' + url + '">open it?</a>';
-      $('<div class="warning">' + html + '</div>').prependTo('#create_upmock');
+    $.ajax({
+      type: 'POST',
+      url: '/user/' + self.user.name + '/create',
+      data: JSON.stringify({name: docName})
+    }).then(function() {
+      document.location.href = '/user/' + self.user.name + '/' + docName + '/';
     }).fail(function(xhr) {
-      $db.saveDoc({_id: docName}).always(function(doc, _, xhr) {
-        if (xhr.status === 201) {
-          document.location = url;
-        }
-      });
+      var json = JSON.parse(xhr.responseText);
+      if (xhr.status !== 201) {
+        return showWarning('#create_upmock', json.reason);
+      }
     });
   }
 
@@ -154,6 +168,7 @@ var UpMock = function() {
   // Trail.Router.get(/^#(\/)?$/, HomeView, HomeView.show);
 
   Trail.Router.post('#create', this, create);
+  Trail.Router.post('#delete', this, deleteDoc);
   Trail.Router.post('#logout', this, logout);
   Trail.Router.post('#login', this, login);
   Trail.Router.post('#register', this, register);
@@ -162,7 +177,7 @@ var UpMock = function() {
   $.get("/couch/_session", function(data) {
     self.user = !data.userCtx.name ? false : {name: data.userCtx.name};
   }, "json").then(function() {
-    var tpl = !!user ? '#logged_in_tpl' : 'logged_out_tpl';
+    var tpl = !!self.user ? '#logged_in_tpl' : '#logged_out_tpl';
     $('#user').html($(tpl).html());
     if (user) {
       $('#homelink').attr('href', '/user/' + self.user.name + '/')

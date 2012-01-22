@@ -25,7 +25,13 @@
       <h4>Your Mockups</h4>
       <ul>
         {{#saved.rows}}
-        <li><a href="/user/{{../user_id}}/{{this.id}}/">{{this.id}}</a></li>
+        <li>
+          <a href="/user/{{../user_id}}/{{this.id}}/">{{this.id}}</a>
+          <form action="#delete">
+            <input type="hidden" value="{{this.id}}" name="id" />
+            <input type="submit" value="delete" />
+          </form>
+        </li>
         {{/saved.rows}}
       </ul>
 

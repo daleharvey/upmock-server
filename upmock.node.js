@@ -8,7 +8,7 @@ var couchUrl = 'http://' +
   config.couch.host + ':' + config.couch.port + '/';
 
 var nano = require('nano')(couchAuthUrl);
-var app = require('express').createServer();
+var express = require('express');
 var http = require('http');
 var hashlib = require("hashlib");
 var _ = require('underscore');
@@ -17,8 +17,12 @@ var r = require('request').defaults({
   json: true
 });
 
+var app = express.createServer();
 
-app.configure(function(){
+var FREE_LIMIT = 3;
+
+app.configure(function() {
+  app.use(express.bodyParser());
   app.set('views', __dirname + '/views');
   app.register('.html', require('handlebars'));
   app.set('view engine', 'handlebars');
@@ -52,6 +56,55 @@ app.get('/user/:userId/:db/', function(req, res){
   res.sendfile(__dirname + '/public/upmock.html');
 });
 
+app.delete('/user/:userId/:db/', function(req, res) {
+  var userDb = nano.use('upmock-' + req.params.userId);
+  var docName = req.params.db;
+  userDb.get(docName, null, function(err, doc) {
+    userDb.destroy(docName, doc._rev, function() {
+      return reply(res, 200, {ok: true});
+    });
+  });
+});
+
+
+app.post('/user/:userId/create', function(req, res) {
+
+  var docName = req.body.name;
+  var name = req.user.userCtx.name;
+  var userDb = nano.use('upmock-' + name);
+
+  nano.request({db: '_users', doc: 'org.couchdb.user:' + name}, function(_, user) {
+    userDb.get('', function(_, db) {
+
+      if (db.doc_count + 1 > FREE_LIMIT && user.state !== 'active_paid') {
+        return reply(res, 403, {
+          error: 'account_limit',
+          reason: 'Free Accounts are limited to 3 mockups'
+        });
+      }
+
+      if (docName === null) {
+        return reply(res, 400, {
+          error: 'invalid_name',
+          reason: 'Invalid mockup name'
+        });
+      }
+
+      userDb.insert({}, docName, function(err, _, write) {
+        if (write['status-code'] === 201) {
+          return reply(res, 201, {ok: true});
+        } else {
+          return reply(res, 400, {
+            error: 'doc_exists',
+            reason: 'A mockup with that name already exists'
+          });
+        }
+      });
+    });
+  });
+});
+
+
 
 // Proxy all requests from /couch/* to the root of the couch host
 app.all('/couch/*', function(req, res) {
@@ -80,7 +133,6 @@ app.post('/login', function(req, client) {
 // This needs retry mechanisms built in, other failures are transient but if
 // this fails then it can be left inconsistent
 app.post('/register', function(req, client) {
-
   fetchJSONBody(req, function(post) {
 
     console.log('REGISTRATION: ' + post.user);
@@ -136,6 +188,7 @@ app.param('userId', function(req, res, next, id) {
     if (resp.statusCode !== 200 || body.userCtx.name !== id) {
       return res.render('401.html');
     }
+    req.user = body;
     next();
   });
 });
@@ -150,6 +203,7 @@ function reply(client, status, content, hdrs) {
 
 function loginRequest(username, password, callback) {
   r.post({
+    json: false,
     uri: couchUrl + '_session',
     body: 'name=' + username + '&password=' + password,
     headers: {'content-type': 'application/x-www-form-urlencoded' }

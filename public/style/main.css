@@ -96,3 +96,9 @@ header { position: relative; }
 h1 a {
     text-decoration: none;
 }
+
+#login .warning {
+    position: absolute;
+    bottom:-60px;
+    left:3px;
+}
