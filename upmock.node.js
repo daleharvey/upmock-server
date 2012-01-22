@@ -21,10 +21,17 @@ var app = express.createServer();
 
 var FREE_LIMIT = 3;
 
+var Handlebars = require('handlebars');
+
+Handlebars.registerHelper('decode', function(str) {
+  return decodeURIComponent(str);
+});
+
+
 app.configure(function() {
   app.use(express.bodyParser());
   app.set('views', __dirname + '/views');
-  app.register('.html', require('handlebars'));
+  app.register('.html', Handlebars);
   app.set('view engine', 'handlebars');
   app.set("view options", { layout: false });
 });
@@ -83,7 +90,7 @@ app.post('/user/:userId/create', function(req, res) {
         });
       }
 
-      if (docName === null) {
+      if (docName === '') {
         return reply(res, 400, {
           error: 'invalid_name',
           reason: 'Invalid mockup name'
