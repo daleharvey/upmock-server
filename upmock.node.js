@@ -90,7 +90,7 @@ app.post('/user/:userId/create', function(req, res) {
         });
       }
 
-      if (docName === '') {
+      if (!/^[A-Za-z0-9_ ]{3,20}$/.test(docName)) {
         return reply(res, 400, {
           error: 'invalid_name',
           reason: 'Invalid mockup name'
