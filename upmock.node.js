@@ -123,15 +123,17 @@ app.all('/couch/*', function(req, res) {
 
 // Proxy login requests to couch
 app.post('/login', function(req, client) {
-  fetchJSONBody(req, function(post) {
-    loginRequest(post.user, post.password, function(err, res, body) {
-      if (res.statusCode === 401) {
-        reply(client, 401, {error: 'invalid login'});
-      } else {
-        reply(client, 200, {ok: true}, {'Set-Cookie': res.headers['set-cookie']});
-      }
-    });
+
+  var post = req.body;
+
+  loginRequest(post.user, post.password, function(err, res, body) {
+    if (res.statusCode === 401) {
+      reply(client, 401, {error: 'invalid login'});
+    } else {
+      reply(client, 200, {ok: true}, {'Set-Cookie': res.headers['set-cookie']});
+    }
   });
+
 });
 
 
@@ -140,43 +142,42 @@ app.post('/login', function(req, client) {
 // This needs retry mechanisms built in, other failures are transient but if
 // this fails then it can be left inconsistent
 app.post('/register', function(req, client) {
-  fetchJSONBody(req, function(post) {
 
-    console.log('REGISTRATION: ' + post.user);
+  var post = req.body;
+  var users = nano.use('_users');
+  var name = post.user;
+  var userName = 'org.couchdb.user:' + post.user;
 
-    var users = nano.use('_users');
-    var name = post.user;
-    var userName = 'org.couchdb.user:' + post.user;
+  console.log('REGISTRATION: ' + post.user);
 
-    areValidCredentials(users, userName, post, function(areValid, reason) {
+  areValidCredentials(users, userName, post, function(areValid, reason) {
 
-      if (!areValid) {
+    if (!areValid) {
 
-        reply(client, reason.status, reason.json);
+      reply(client, reason.status, reason.json);
 
-      } else {
-        createUserDoc(userName, name, post.password, function(user_doc) {
+    } else {
+      createUserDoc(userName, name, post.password, function(user_doc) {
 
-          users.insert(user_doc, function(err, body, hdrs) {
+        users.insert(user_doc, function(err, body, hdrs) {
 
-            if (err) {
-              return reply(client, 503, {error: 'unknown'});
-            }
+          if (err) {
+            return reply(client, 503, {error: 'unknown'});
+          }
 
-            loginRequest(post.user, post.password, function(error, res, body) {
-              createAccount(name, function(err) {
-                if (err) {
-                  return reply(client, 501, {error: 'unknown'});
-                }
-                reply(client, 201, {ok: true}, {
-                  'Set-Cookie': res.headers['set-cookie']
-                });
+          loginRequest(post.user, post.password, function(error, res, body) {
+            createAccount(name, function(err) {
+              if (err) {
+                return reply(client, 501, {error: 'unknown'});
+              }
+              reply(client, 201, {ok: true}, {
+                'Set-Cookie': res.headers['set-cookie']
               });
             });
           });
         });
-      }
-    });
+      });
+    }
   });
 });
 
@@ -225,16 +226,6 @@ function loginRequest(username, password, callback) {
     body: 'name=' + username + '&password=' + password,
     headers: {'content-type': 'application/x-www-form-urlencoded' }
   }, callback);
-}
-
-function fetchJSONBody(req, callback) {
-  var content = '';
-  req.addListener('data', function(data) {
-    content += data;
-  });
-  req.addListener('end', function() {
-    callback(JSON.parse(content));
-  });
 }
 
 function createUserDoc(id, name, password, callback) {
