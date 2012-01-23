@@ -7,6 +7,7 @@ var couchAuthUrl = 'http://' +
 var couchUrl = 'http://' +
   config.couch.host + ':' + config.couch.port + '/';
 
+var fs = require('fs');
 var nano = require('nano')(couchAuthUrl);
 var express = require('express');
 var http = require('http');
@@ -36,9 +37,8 @@ app.configure(function() {
   app.set("view options", { layout: false });
 });
 
-
 app.get('/', function(_, res) {
-  res.render('index.html');
+  renderIndex(res, '/views/home.tpl', {});
 });
 
 
@@ -48,7 +48,7 @@ app.get('/user/:userId/', function(req, res) {
     doc: '_all_docs',
     headers: {'cookie': req.headers.cookie || ''}
   }, function(err, body) {
-    res.render('user.html', {
+    renderIndex(res, '/views/user.tpl', {
       user_id: req.params.userId,
       saved: body
     });
@@ -193,12 +193,22 @@ app.param('userId', function(req, res, next, id) {
     headers: {'cookie': req.headers.cookie || ''}
   }, function(err, resp, body) {
     if (resp.statusCode !== 200 || body.userCtx.name !== id) {
-      return res.render('401.html');
+      return  renderIndex(res, '/views/401.tpl', {});
     }
     req.user = body;
     next();
   });
 });
+
+
+function renderIndex(res, content, tpldata) {
+  fs.readFile(__dirname + content, function(err,data) {
+    var tmp = Handlebars.compile(data.toString());
+    res.render('index.html', {
+      content: tmp(tpldata)
+    });
+  });
+}
 
 
 function reply(client, status, content, hdrs) {
