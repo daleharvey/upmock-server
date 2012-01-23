@@ -72,7 +72,8 @@ var UpMock = function() {
     e.preventDefault();
     $.ajax({
       type: 'DELETE',
-      url: '/user/' + window.UpMock.user.name + '/' + details.id + '/',
+      url: '/user/' + window.UpMock.user.name + '/' +
+        encodeURIComponent(details.id) + '/',
       data: ''
     }).then(function() {
       $(e.target).parents('li').remove();

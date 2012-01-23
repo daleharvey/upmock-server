@@ -71,7 +71,7 @@ app.get('/user/:userId/:db/', function(req, res){
 
 app.delete('/user/:userId/:db/', function(req, res) {
   var userDb = nano.use('upmock-' + req.params.userId);
-  var docName = encodeURIComponent(req.params.db);
+  var docName = req.params.db;
   userDb.get(docName, null, function(err, doc) {
     userDb.destroy(docName, doc._rev, function() {
       return reply(res, 200, {ok: true});
