@@ -115,10 +115,14 @@ app.post('/user/:userId/create', function(req, res) {
 
 // Proxy all requests from /couch/* to the root of the couch host
 app.all('/couch/*', function(req, res) {
-  var url = couchUrl + req.url.slice(7);
-  var x = r(url);
-  req.pipe(x);
-  x.pipe(res);
+  try {
+    var url = couchUrl + req.url.slice(7);
+    var x = r(url);
+    req.pipe(x);
+    x.pipe(res);
+  } catch(err) {
+    console.log(err);
+  }
 });
 
 // Proxy login requests to couch
