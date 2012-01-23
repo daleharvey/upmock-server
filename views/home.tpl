@@ -1,7 +1,7 @@
 <div id="user_panel">
   <div id="login_wrapper">
     <h2>Whats UpMock?</h2>
-    <p>UpMock is blah blah blah</p>
+    <p>UpMock is a work in progress, thats all folks.</p>
   </div>
   <div id="register_wrapper">
     <h2>Register</h2>
