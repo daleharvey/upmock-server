@@ -179,7 +179,7 @@ var UpMock = function() {
   }, "json").then(function() {
     var tpl = !!self.user ? '#logged_in_tpl' : '#logged_out_tpl';
     $('#user').html($(tpl).html());
-    if (user) {
+    if (self.user) {
       $('#homelink').attr('href', '/user/' + self.user.name + '/')
         .text(self.user.name);
     }
