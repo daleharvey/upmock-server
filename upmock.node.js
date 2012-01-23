@@ -28,13 +28,19 @@ Handlebars.registerHelper('decode', function(str) {
   return decodeURIComponent(str);
 });
 
+var parse = express.bodyParser();
 
 app.configure(function() {
-  app.use(express.bodyParser());
   app.set('views', __dirname + '/views');
   app.register('.html', Handlebars);
   app.set('view engine', 'handlebars');
   app.set("view options", { layout: false });
+  app.use(function(req, res, next) {
+    if (0 === req.url.indexOf('/couch')) {
+      return next();
+    }
+    parse(req, res, next);
+  });
 });
 
 app.get('/', function(_, res) {
