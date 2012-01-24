@@ -50,12 +50,12 @@ app.get('/', function(_, res) {
 
 app.get('/user/:userId/', function(req, res) {
   nano.request({
-    db: 'upmock-' + req.params.userId,
+    db: 'upmock-' + req.user.userCtx.name,
     doc: '_all_docs',
     headers: {'cookie': req.headers.cookie || ''}
   }, function(err, body) {
     renderIndex(res, '/views/user.tpl', {
-      user_id: req.params.userId,
+      user_id: req.user.userCtx.name,
       saved: body
     });
   });
@@ -70,7 +70,7 @@ app.get('/user/:userId/:db/', function(req, res){
 });
 
 app.delete('/user/:userId/:db/', function(req, res) {
-  var userDb = nano.use('upmock-' + req.params.userId);
+  var userDb = nano.use('upmock-' + req.user.userCtx.name);
   var docName = req.params.db;
   userDb.get(docName, null, function(err, doc) {
     userDb.destroy(docName, doc._rev, function() {
@@ -122,6 +122,7 @@ app.post('/user/:userId/create', function(req, res) {
 app.post('/login', function(req, client) {
 
   var post = req.body;
+  post.user = post.user.toLowerCase();
 
   loginRequest(post.user, post.password, function(err, res, body) {
     if (res.statusCode === 401) {
@@ -141,6 +142,8 @@ app.post('/login', function(req, client) {
 app.post('/register', function(req, client) {
 
   var post = req.body;
+  post.user = post.user.toLowerCase();
+
   var users = nano.use('_users');
   var name = post.user;
   var userName = 'org.couchdb.user:' + post.user;
@@ -192,6 +195,7 @@ app.get('*', function(req, res) {
 // If the request is asking for a valid id, lookup the session to make
 // sure they are logged in (with the right name)
 app.param('userId', function(req, res, next, id) {
+  id = id.toLowerCase();
   r.get({
     uri: couchUrl + '_session',
     headers: {'cookie': req.headers.cookie || ''}
@@ -200,6 +204,7 @@ app.param('userId', function(req, res, next, id) {
       return  renderIndex(res, '/views/401.tpl', {});
     }
     req.user = body;
+    req.user.userCtx.name = req.user.userCtx.name.toLowerCase();
     next();
   });
 });
