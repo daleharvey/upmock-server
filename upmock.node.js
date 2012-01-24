@@ -72,7 +72,7 @@ app.get('/user/:user/:db/', function(req, res) {
     if (resp.statusCode === 200 && body.userCtx.name === req.params.user) {
       return res.sendfile(__dirname + '/public/upmock.html');
     }
-    nano.use('upmock-' + req.params.user).get(req.params.db, null, function(doc) {
+    nano.use('upmock-' + req.params.user).get(req.params.db, null, function(err, doc) {
       res.render('preview.html', {html: doc.html});
     });
   });
