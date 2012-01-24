@@ -181,8 +181,8 @@ app.post('/register', function(req, client) {
 // Proxy all requests from /couch/* to the root of the couch host
 app.get('/couch/_session', proxy);
 app.delete('/couch/_session', proxy);
-app.get('/couch/:username/:docname/', proxy);
-app.put('/couch/:username/:docname/', proxy);
+app.get('/couch/:username/:docname', proxy);
+app.put('/couch/:username/:docname', proxy);
 
 app.get('*', function(req, res) {
   res.sendfile(__dirname + '/public' + req.params[0]);
