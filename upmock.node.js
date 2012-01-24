@@ -82,7 +82,7 @@ app.delete('/user/:userId/:db/', function(req, res) {
 
 app.post('/user/:userId/create', function(req, res) {
 
-  var docName = encodeURIComponent(req.body.name);
+  var docName = req.body.name;
   var name = req.user.userCtx.name;
   var userDb = nano.use('upmock-' + name);
 

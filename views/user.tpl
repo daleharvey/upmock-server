@@ -1,4 +1,4 @@
-<h4>Your Mockups</h4>
+<h4>Your UpMocks</h4>
 <ul>
   {{#saved.rows}}
   <li>
@@ -11,7 +11,7 @@
   {{/saved.rows}}
 </ul>
 
-<h4>Create New upMock</h4>
+<h4>Create New UpMock</h4>
 <form action="#create" id="create_upmock">
   <input type="text" name="name" placeholder="Name" />
   <input type="submit" value="Create" />
