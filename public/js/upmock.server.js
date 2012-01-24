@@ -148,7 +148,8 @@ var UpMock = function() {
       url: '/user/' + self.user.name + '/create',
       data: JSON.stringify({name: docName})
     }).then(function() {
-      document.location.href = '/user/' + self.user.name + '/' + encodeURIComponent(docName) + '/';
+      document.location.href = '/user/' + self.user.name + '/' +
+        encodeURIComponent(docName) + '/';
     }).fail(function(xhr) {
       var json = JSON.parse(xhr.responseText);
       if (xhr.status !== 201) {

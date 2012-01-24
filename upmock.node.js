@@ -118,19 +118,6 @@ app.post('/user/:userId/create', function(req, res) {
 });
 
 
-
-// Proxy all requests from /couch/* to the root of the couch host
-app.all('/couch/*', function(req, res) {
-  try {
-    var url = couchUrl + req.url.slice(7);
-    var x = r(url);
-    req.pipe(x);
-    x.pipe(res);
-  } catch(err) {
-    console.log(err);
-  }
-});
-
 // Proxy login requests to couch
 app.post('/login', function(req, client) {
 
@@ -191,6 +178,12 @@ app.post('/register', function(req, client) {
   });
 });
 
+// Proxy all requests from /couch/* to the root of the couch host
+app.get('/couch/_session', proxy);
+app.delete('/couch/_session', proxy);
+app.get('/couch/:username/:docname/', proxy);
+app.put('/couch/:username/:docname/', proxy);
+
 app.get('*', function(req, res) {
   res.sendfile(__dirname + '/public' + req.params[0]);
 });
@@ -210,6 +203,14 @@ app.param('userId', function(req, res, next, id) {
     next();
   });
 });
+
+
+function proxy(req, res) {
+  var url = couchUrl + req.url.slice(7);
+  var x = r(url);
+  req.pipe(x);
+  x.pipe(res);
+}
 
 
 function renderIndex(res, content, tpldata) {
