@@ -62,11 +62,20 @@ app.get('/user/:userId/', function(req, res) {
 });
 
 
-// Serves the main application index.html, this path needs a check
-// for auth errrors to give the user a login screen if they arent
-// logged in
-app.get('/user/:userId/:db/', function(req, res){
-  res.sendfile(__dirname + '/public/upmock.html');
+// If the user is logged in, serve the app, if not serve a preview
+// TODO: give option to make private
+app.get('/user/:user/:db/', function(req, res) {
+  r.get({
+    uri: couchUrl + '_session',
+    headers: {'cookie': req.headers.cookie || ''}
+  }, function(err, resp, body) {
+    if (resp.statusCode === 200 && body.userCtx.name === req.params.user) {
+      return res.sendfile(__dirname + '/public/upmock.html');
+    }
+    nano.use('upmock-' + req.params.user).get(req.params.db, null, function(doc) {
+      res.render('preview.html', {html: doc.html});
+    });
+  });
 });
 
 app.delete('/user/:userId/:db/', function(req, res) {
