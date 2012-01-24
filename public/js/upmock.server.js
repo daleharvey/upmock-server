@@ -130,7 +130,12 @@ var UpMock = function() {
 
   function showWarning(id, msg) {
     $(".warning").remove();
-    $('<p class="warning">' + msg + '</p>').prependTo(id);
+    var warning = $('<p class="warning">' + msg + '</p>').prependTo(id);
+    setTimeout(function() {
+      warning.fadeOut('medium', function() {
+        warning.remove();
+      });
+    }, 3000);
   }
 
   function create(e, details) {
