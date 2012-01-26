@@ -44,7 +44,7 @@
         <div id="font-preview-wrapper">
           <div id="font-preview-style"></div>
           <ul id="font-preview"></ul>
-          <button>Load More</button>
+          <div style="padding: 10px"><button>Load More Fonts</button></div>
         </div>
       </div>
     </div>
@@ -363,9 +363,9 @@
 
       <select id="font-family" class="toolbar-select" title="Font Family">
         {{#fonts}}
-        <option {{selected this ../selectedFont}} value="{{.}}">{{.}}</option>
+        <option {{selected this ../selectedFont}} style="font-family:{{.}}" value="{{.}}">{{.}}</option>
         {{/fonts}}
-        <option value="other">Other ...</option>
+        <option value="other">Add More Fonts ...</option>
       </select>
 
       <input type="number" id="font-size" data-css="font-size" title="Font Size"
