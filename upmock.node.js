@@ -48,6 +48,14 @@ app.get('/', function(_, res) {
 });
 
 
+app.get('/fonts/', function(_, res) {
+  var googleApiUrl = 'https://www.googleapis.com/webfonts/v1/webfonts?key=';
+  r.get({url:  googleApiUrl + config.googleApiKey}, function(err, resp, body) {
+    return reply(res, 200, body);
+  });
+});
+
+
 app.get('/user/:userId/', function(req, res) {
   nano.request({
     db: 'upmock-' + req.user.userCtx.name,

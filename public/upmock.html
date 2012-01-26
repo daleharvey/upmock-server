@@ -36,6 +36,21 @@
       </div>
     </div>
 
+    <div id="add-fonts" class="modal-overlay">
+      <div class="inner-modal">
+        <input class="close" type="button" value="Complete Selection" />
+        <h2>Add Fonts</h2>
+        <hr />
+        <div id="font-preview-wrapper">
+          <div id="font-preview-style"></div>
+          <ul id="font-preview"></ul>
+          <button>Load More</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="font-links"></div>
+
   </body>
 
 
@@ -347,14 +362,10 @@
       </div>
 
       <select id="font-family" class="toolbar-select" title="Font Family">
-        <option {{option family-helvetica}} value="helvetica">Helvetica</option>
-        <option {{option family-tnr}} value="tnr">Times New Roman</option>
-        <option {{option family-georgia}} value="georgia">Georgia</option>
-        <option {{option family-garamond}} value="garamond">Garamond</option>
-        <option {{option family-verdana}} value="verdana">Verdana</option>
-        <option {{option family-trebuchet}} value="trebuchet">Trebuchet</option>
-        <option {{option family-impact}} value="impact">Impact</option>
-        <option {{option family-monospace}} value="monospace">Monospace</option>
+        {{#fonts}}
+        <option {{selected this ../selectedFont}} value="{{.}}">{{.}}</option>
+        {{/fonts}}
+        <option value="other">Other ...</option>
       </select>
 
       <input type="number" id="font-size" data-css="font-size" title="Font Size"
