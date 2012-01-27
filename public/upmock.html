@@ -57,9 +57,6 @@
   <script type="text/html" id="background-toolbar-tpl">
     <div class="section">
       <div id="picker-placeholder"></div>
-      <input type="number" min="100" value="{{canvasWidth}}"
-             title="Background Width"
-             id="canvas-width" class="toolbar-label-icon" />
     </div>
   </script>
 
@@ -138,6 +135,7 @@
            data-background="{{backgroundColor}}"></div>
       <div class="dropdown toolbar-icon" id="border-picker" title="Border Options">
         <form class="inner">
+
           <label>
             <span>Border:</span>
             <select id="border-picked">
@@ -283,14 +281,19 @@
                    value="{{overlay.width}}" />
           </label>
           <label>
-            <span>Height:</span>
-            <input id="overlay-height" type="number"
-                   value="{{overlay.height}}" />
-          </label>
-          <label>
             <span>Gutter:</span>
             <input id="overlay-gutter" type="number"
                    value="{{overlay.gutter}}" />
+          </label>
+          <label>
+            <span>Columns:</span>
+            <input id="overlay-columns" type="number"
+                   value="{{overlay.columns}}" />
+          </label>
+          <label>
+            <span>Height:</span>
+            <input id="overlay-height" type="number"
+                   value="{{overlay.height}}" />
           </label>
           <label>
             <span>Colour:</span>
