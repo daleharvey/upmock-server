@@ -27,15 +27,36 @@
 
     <div id="cursor-overlay" class="modal-overlay"></div>
 
+    <div id="font-links"></div>
+
+  </body>
+
+
+  <script type="text/html" id="keyboard-help-tpl">
     <div id="keyboard-help" class="modal-overlay">
       <div class="inner-modal">
         <span id="close-help">Press <strong>?</strong> to hide / show help</span>
         <h2>Keyboard Shortcuts</h2>
         <hr />
-        <div id="keyboard-placer"></div>
+        <div id="keyboard-placer">
+          {{#sections}}
+          <div class="shortcut-section">
+            <h3>{{description}}</h3>
+            {{#shortcuts}}
+            <dl>
+              <dt>{{key}}</dt>
+              <dd>{{description}}</dd>
+            </dl>
+            {{/shortcuts}}
+          </div>
+          {{/sections}}
+        </div>
       </div>
     </div>
+  </script>
 
+
+  <script type="text/html" id="fonts-dialog-tpl">
     <div id="add-fonts" class="modal-overlay">
       <div class="inner-modal">
         <input class="close" type="button" value="Complete Selection" />
@@ -48,10 +69,7 @@
         </div>
       </div>
     </div>
-
-    <div id="font-links"></div>
-
-  </body>
+  </script>
 
 
   <script type="text/html" id="background-toolbar-tpl">
@@ -443,20 +461,6 @@
         <span style="font-style: italic">{{family}}</span>
       </label>
     </li>
-  </script>
-
-  </script>
-
-  <script type="text/html" id="shortcut-section-tpl">
-    <div class="shortcut-section">
-      <h3>{{description}}</h3>
-      {{#shortcuts}}
-      <dl>
-        <dt>{{key}}</dt>
-        <dd>{{description}}</dd>
-      </dl>
-      {{/shortcuts}}
-    </div>
   </script>
 
   <script src="./js/libs/jquery-1.7.1.min.js"></script>
