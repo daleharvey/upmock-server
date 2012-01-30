@@ -1,4 +1,5 @@
-var config = require('./config').config;
+var fs = require('fs');
+var config = JSON.parse(fs.readFileSync('./config.json').toString());
 
 var couchAuthUrl = 'http://' +
   config.couch.admin.name + ':' + config.couch.admin.pass + '@' +
@@ -7,7 +8,6 @@ var couchAuthUrl = 'http://' +
 var couchUrl = 'http://' +
   config.couch.host + ':' + config.couch.port + '/';
 
-var fs = require('fs');
 var nano = require('nano')(couchAuthUrl);
 var express = require('express');
 var http = require('http');

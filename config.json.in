@@ -1,0 +1,17 @@
+{
+  "couch": {
+    "admin": {
+      "name": "%COUCH_USERNAME%",
+      "pass": "%COUCH_PASSWORD%"
+    },
+    "host": "%COUCH_HOST%",
+    "port": "%COUCH_PORT%"
+  },
+
+  "node": {
+    "host": "%NODE_HOST%",
+    "port": "%NODE_PORT%"
+  },
+
+  "googleApiKey": "%GOOGLE_FONTS_API_KEY"
+}
