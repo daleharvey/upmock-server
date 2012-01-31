@@ -190,6 +190,7 @@ var UpMock = function() {
       $('#homelink').attr('href', '/user/' + self.user.name + '/')
         .text(self.user.name);
     }
+    $(document.body).append('<div id="selenium"></div>');
     Trail.Router.init();
   });
 
