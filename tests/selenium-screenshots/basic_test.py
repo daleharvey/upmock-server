@@ -12,6 +12,7 @@ import time
 import json
 import unittest
 import os
+import ImageDraw
 
 def whoami():
     return sys._getframe(1).f_code.co_name
@@ -25,9 +26,6 @@ def readConfig():
 def find(browser, selector):
     return browser.find_element_by_css_selector(selector)
 
-def equal(im1, im2):
-    return ImageChops.difference(im1, im2).getbbox() is None
-
 def wait(browser):
     WebDriverWait(browser, 10).until(
         lambda driver : driver.find_element_by_id("selenium"))
@@ -37,15 +35,33 @@ def get_and_wait(browser, url):
     wait(browser)
 
 def testImage(browser, name):
-    pathPass = './passing/%s.png' % name
-    pathResult = './results/%s.png' % name
     # Let chromes scrollbar go away
     time.sleep(1)
-    browser.save_screenshot(pathResult)
-    if os.path.isfile(pathPass):
-        passing = Image.open(pathPass)
-        result = Image.open(pathResult)
-        return equal(passing, result)
+    browser.save_screenshot('./results/%s.png' % name)
+    return compareImage(name)
+
+def compareImage(name):
+
+    pathPass = './passing/%s.png' % name
+    pathResult = './results/%s.png' % name
+
+    if not os.path.isfile(pathPass):
+        return False
+
+    passing = Image.open(pathPass)
+    result = Image.open(pathResult)
+    difference = ImageChops.difference(result, passing).getbbox()
+
+    if difference is None:
+        return True
+
+    # Draw an rectangle to highlight the area in the result
+    # that is different from the passing image
+    draw = ImageDraw.Draw(result)
+    draw.rectangle(difference, outline="red")
+    del draw
+
+    result.save('./results/%s-diff.png' % name, "PNG")
     return False
 
 def emptyDir(folder):
