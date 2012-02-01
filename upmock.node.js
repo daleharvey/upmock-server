@@ -228,10 +228,7 @@ app.param('userId', function(req, res, next, id) {
 
 
 function proxy(req, res) {
-  var url = couchUrl + req.url.slice(7);
-  var x = r(url);
-  req.pipe(x);
-  x.pipe(res);
+  req.pipe(r(couchUrl + req.url.slice(7))).pipe(res);
 }
 
 
