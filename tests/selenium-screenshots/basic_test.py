@@ -35,6 +35,7 @@ def get_and_wait(browser, url):
     wait(browser)
 
 def testImage(browser, name):
+    find(browser, "#cursor").click()
     # Let chromes scrollbar go away
     time.sleep(1)
     browser.save_screenshot('./results/%s.png' % name)
@@ -101,14 +102,15 @@ class BasicTest(unittest.TestCase):
         get_and_wait(self.browser, self.host + "user/test/")
         find(self.browser, "[name=name]").send_keys("test" + Keys.RETURN)
         wait(self.browser)
+        get_and_wait(self.browser, self.host + "user/test/test/")
 
     def tearDown(self):
+        find(self.browser, "#save-data").click()
         get_and_wait(self.browser, self.host + "user/test/")
         find(self.browser, "[value=delete]").click()
         wait(self.browser)
 
     def test_basic(self):
-        get_and_wait(self.browser, self.host + "user/test/test/")
         find(self.browser, "#add-block").click()
         canvas = find(self.browser, "#canvas")
         ActionChains(self.browser)\
@@ -118,12 +120,9 @@ class BasicTest(unittest.TestCase):
             .release(None)\
             .perform()
 
-        find(self.browser, "#cursor").click()
-
         self.assertTrue(testImage(self.browser, whoami()))
 
     def test_basic2(self):
-        get_and_wait(self.browser, self.host + "user/test/test/")
         find(self.browser, "#add-block").click()
         canvas = find(self.browser, "#canvas")
         ActionChains(self.browser)\
@@ -132,8 +131,6 @@ class BasicTest(unittest.TestCase):
             .move_by_offset(100, 200)\
             .release(None)\
             .perform()
-
-        find(self.browser, "#cursor").click()
 
         self.assertTrue(testImage(self.browser, whoami()))
 
