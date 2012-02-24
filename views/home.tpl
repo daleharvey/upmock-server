@@ -1,21 +1,10 @@
-<div id="user_panel">
-  <div id="login_wrapper">
-    <h2>Whats UpMock?</h2>
-    <p>UpMock is a work in progress, thats all folks.</p>
-  </div>
-  <div id="register_wrapper">
-    <h2>Register</h2>
-    <form action="#register" id="register">
-      <label for="register_username">Username:</label>
-      <input type="text" name="username" />
-      <label for="login_username">Password:</label>
-      <input type="password" name="password" />
-      <label for="confirm_username">Confirm Password:</label>
-      <input type="password" name="confirm_password" />
-      <input type="submit" value="Register" />
-      <p class="subtext">Currently username and passwords can only
-        contain letters, numbera and _, They must be 3 to 20 characters long.</p>
-    </form>
-  </div>
-  <br style="clear:both" />
-</div>
+<p>We believe in a better tool for designing on the web.</p>
+<p>
+  A tool that was built specifically for the web, that gives you the freedom
+  to invent your best designs, and the best set of features to do so.
+</p>
+<p>
+  UpMock is currently in private beta, if you would like early access then
+  get in touch:<br /><br />
+  <a href="http://twitter.com/upmock">@UpMock on twitter</a>
+</p>

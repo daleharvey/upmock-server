@@ -7,17 +7,19 @@ h3 {
 }
 
 body {
-    padding:20px;
     overflow-x:hidden;
     overflow-y:scroll;
-    background: none repeat scroll 0 0 #333;
-    width: 600px;
-    margin:0 auto;
+    background: none repeat scroll 0 0 #000;
+    margin:50px 100px;
+}
+
+body.home {
+    margin:100px 100px;
 }
 
 body,
 p {
-    color: #EEE;
+    color: #CCC;
 }
 
 body,
@@ -28,15 +30,42 @@ textarea {
     font: 1em Helvetica, arial, sans-serif;
 }
 
-form { display: inline; }
+#logout input[type=submit], #upmock input[type=submit] {
+    display:inline;
+    padding: 5px;
+    margin-top: 0;
+}
 
+form { display: inline; }
+h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 64px;
+    font-weight: normal;
+    margin: 0 0 20px 0;
+}
 h2 {
     font-weight: normal;
     margin-top: 0px;
 }
-
+h3 {
+    font-weight: normal;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
 a {
-    color: #999;
+    color: #FFF;
+    text-decoration: none;
+}
+
+a:hover {
+    color:#EEE;
+}
+p {
+    line-height: 22px;
+}
+
+#content p {
+    width: 400px;
 }
 
 #content label {
@@ -53,21 +82,35 @@ a {
     width: 259px;
     float:left;
 }
-#register_wrapper {
-    padding: 20px;
-    width: 258px;
-    float:right;
-    background: #111;
-    border-left:1px solid #666;
+input[type=text], input[type=password] {
+    display: block;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 3px solid #444;
+    background: #EEE;
+    font-size: 14px;
+    width: 200px;
 }
 
-#register input[type=submit] {
+input[type=submit] {
     display: block;
-    margin-top: 15px;
+    padding: 10px;
+    background: #444;
+    color:white;
+    text-shadow:1px 1px 1px #000;
+    border: 2px solid #222;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#register {
+    display: block;
+    margin-top: 30px;
 }
 
 .warning {
     background: red;
+    color: white;
     padding:10px;
 }
 
@@ -81,16 +124,9 @@ header { position: relative; }
 
 #user {
     position: absolute;
-    bottom: 0px;
-    right: 0px;
+    top: 50px;
+    right: 0;
     float: right;
-}
-
-#user input[type=text], #user input[type=password] {
-    font-size: 12px;
-    background: #444;
-    border:1px solid #555;
-    color: #CCC;
 }
 
 h1 a {

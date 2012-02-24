@@ -5,31 +5,28 @@
     <meta charset="utf-8" />
 
     <title>UpMock</title>
+    <link href="http://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
     <link rel="stylesheet" href="/style/main.css">
 
   </head>
 
-  <body>
+  <body class="{{bodyClass}}">
 
     <header>
-      <div id="user">
-      </div>
-      <h1><a href="/">UpMock (beta)</a></h1>
+      <div id="user"></div>
+      <h1><a href="/">UpMock</a></h1>
     </header>
 
     <div id="content">
       {{{content}}}
     </div>
 
-    <footer>
-      Follow <a href="http://twitter.com/upmock">@upmock</a> for news and announcements
-    </footer>
-
   </body>
 
- <script type="text/html" id="logged_out_tpl">
+  <script type="text/html" id="logged_out_tpl">
+    <h3>Already have an account?</h3>
     <form action="#login" id="login">
-      <input type="text" name="username" placeholder="username" /><br />
+      <input type="text" name="username" placeholder="username" />
       <input type="password" name="password" placeholder="password" />
       <input type="submit" value="Login" />
     </form>
@@ -38,7 +35,7 @@
   <script type="text/html" id="logged_in_tpl">
     <div>
       Welcome <a id="homelink" href="/user/{{user_id}}/"></a>
-      <form action="#logout">
+      <form action="#logout" id="logout">
         <input type="submit" value="Logout" />
       </form>
     </div>

@@ -1,5 +1,5 @@
 <h4>Your UpMocks</h4>
-<ul>
+<ul id="upmock">
   {{#saved.rows}}
   <li>
     <a href="/user/{{../user_id}}/{{this.id}}/">{{decode this.id}}</a>

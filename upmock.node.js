@@ -44,7 +44,11 @@ app.configure(function() {
 });
 
 app.get('/', function(_, res) {
-  renderIndex(res, '/views/home.tpl', {});
+  renderIndex(res, '/views/home.tpl', {bodyClass: 'home'});
+});
+
+app.get('/earlybird', function(_, res) {
+  renderIndex(res, '/views/earlybird.tpl', {});
 });
 
 
@@ -236,7 +240,8 @@ function renderIndex(res, content, tpldata) {
   fs.readFile(__dirname + content, function(err,data) {
     var tmp = Handlebars.compile(data.toString());
     res.render('index.html', {
-      content: tmp(tpldata)
+      content: tmp(tpldata),
+      bodyClass: tpldata.bodyClass || ''
     });
   });
 }
