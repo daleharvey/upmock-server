@@ -389,12 +389,20 @@
         </div>
       </div>
 
-      <select id="font-family" class="toolbar-select" title="Font Family">
-        {{#fonts}}
-        <option {{selected this ../selectedFont}} style="font-family:{{.}}" value="{{.}}">{{.}}</option>
-        {{/fonts}}
-        <option value="other">Add More Fonts ...</option>
-      </select>
+      <div id="font-family-wrapper" class="dropdown">
+        <span style="font-family:{{selectedFont}}">{{selectedFont}}</span>
+        <div class="arrow-down"></div>
+        <div class="inner">
+          <ul id="font-family" class="toolbar-select" title="Font Family">
+            {{#fonts}}
+            <li {{{selected this ../selectedFont}}}
+                data-value="{{.}}"
+                style="font-family:{{.}}" value="{{.}}">{{.}}</li>
+            {{/fonts}}
+            <li data-value="other">Add More Fonts ...</li>
+          </ul>
+        </div>
+      </div>
 
       <input type="number" id="font-size" data-css="font-size" title="Font Size"
              value="{{fontSize}}"
