@@ -28,6 +28,7 @@
     <div id="cursor-overlay" class="modal-overlay"></div>
 
     <div id="font-links"></div>
+    <div id="font-preview-links"></div>
 
   </body>
 
@@ -50,22 +51,6 @@
             {{/shortcuts}}
           </div>
           {{/sections}}
-        </div>
-      </div>
-    </div>
-  </script>
-
-
-  <script type="text/html" id="fonts-dialog-tpl">
-    <div id="add-fonts" class="modal-overlay">
-      <div class="inner-modal">
-        <input class="close" type="button" value="Complete Selection" />
-        <h2>Add Fonts</h2>
-        <hr />
-        <div id="font-preview-wrapper">
-          <div id="font-preview-style"></div>
-          <ul id="font-preview"></ul>
-          <div style="padding: 10px"><button>Load More Fonts</button></div>
         </div>
       </div>
     </div>
@@ -393,13 +378,14 @@
         <span style="font-family:{{selectedFont}}">{{selectedFont}}</span>
         <div class="arrow-down"></div>
         <div class="inner">
+          <a id="show-all-fonts">Show All Fonts</a>
+          <input type="search" id="search-fonts" placeholder="Search Fonts" />
           <ul id="font-family" class="toolbar-select" title="Font Family">
             {{#fonts}}
             <li {{{selected this ../selectedFont}}}
                 data-value="{{.}}"
                 style="font-family:{{.}}" value="{{.}}">{{.}}</li>
             {{/fonts}}
-            <li data-value="other">Add More Fonts ...</li>
           </ul>
         </div>
       </div>
