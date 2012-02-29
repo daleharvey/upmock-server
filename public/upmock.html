@@ -11,7 +11,7 @@
 
     <div id="loading"><span>Warming the tubes</span></div>
 
-    <div id="home"><a>UpMock<a></div>
+    <div id="home"><a>UpMock</a></div>
 
     <header><div id="top-bar-inner"></div></header>
 
@@ -382,9 +382,9 @@
           <input type="search" id="search-fonts" placeholder="Search Fonts" />
           <ul id="font-family" class="toolbar-select" title="Font Family">
             {{#fonts}}
-            <li {{{selected this ../selectedFont}}}
-                data-value="{{.}}"
-                style="font-family:{{.}}" value="{{.}}">{{.}}</li>
+            <li data-source="{{this.source}}"
+                data-value="{{this.family}}"
+                style="font-family:{{this.id}}">{{this.family}}</li>
             {{/fonts}}
           </ul>
         </div>
@@ -461,6 +461,8 @@
       </label>
     </li>
   </script>
+
+  <script src="http://use.typekit.net/previewkits/pk-v1.js"></script>
 
   <script src="./js/libs/jquery-1.7.1.min.js"></script>
   <script src="./js/libs/handlebars-1.0.0.beta.4.js"></script>
