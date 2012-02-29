@@ -90,7 +90,7 @@ var UpMock = function() {
   }
 
   function login(e, details) {
-
+    var btn = $(e.target).find('input[type=submit]').attr('disabled', 'disabled');
     e.preventDefault();
 
     var credentials = {
@@ -105,11 +105,13 @@ var UpMock = function() {
     }).then(function(data) {
       document.location = '/user/' + details.username + '/';
     }).fail(function(data) {
+      btn.removeAttr('disabled');
       showWarning('#login', "Error Logging in");
     });
   }
 
   function register(e, details) {
+    var btn = $(e.target).find('input[type=submit]').attr('disabled', 'disabled');
     var credentials = {
       user: details.username,
       password: details.password,
@@ -123,6 +125,7 @@ var UpMock = function() {
     }).then(function(data) {
       document.location = '/user/' + details.username + '/';
     }).fail(function(data) {
+      btn.removeAttr('disabled');
       var obj = JSON.parse(data.responseText);
       showWarning('#register', obj.error);
     });
@@ -139,7 +142,7 @@ var UpMock = function() {
   }
 
   function create(e, details) {
-
+    var btn = $(e.target).find('input[type=submit]').attr('disabled', 'disabled');
     var docName = details.name;
     var url = '/user/' + self.user.name + '/' + docName + '/';
 
@@ -151,6 +154,7 @@ var UpMock = function() {
       document.location.href = '/user/' + self.user.name + '/' +
         encodeURIComponent(docName) + '/';
     }).fail(function(xhr) {
+      btn.removeAttr('disabled');
       var json = JSON.parse(xhr.responseText);
       if (xhr.status !== 201) {
         return showWarning('#create_upmock', json.reason);
