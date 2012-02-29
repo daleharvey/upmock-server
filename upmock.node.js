@@ -53,32 +53,51 @@ app.get('/earlybird', function(_, res) {
 
 
 app.get('/fonts/', function(_err, res) {
-  // This most definitely needs to be cached
-  var googleApiUrl = 'https://www.googleapis.com/webfonts/v1/webfonts?key=';
-  var typeKitApiUrl = 'https://typekit.com/api/v1/json/libraries/full?per_page=500';
-  var googleFonts = null;
-  var typekitFonts = null;
-  r.get({url: googleApiUrl + config.googleApiKey}, function(err, resp, body) {
-    googleFonts = body;
-    complete();
-  });
 
-  r.get({url: typeKitApiUrl}, function (err, resp, body) {
-    typekitFonts = body;
-    complete();
-  });
+  fs.stat(__dirname + '/fonts.json',  function (stat_error, stat) {
 
-  function complete() {
-    if (googleFonts && typekitFonts) {
-      var t1 = _.map(typekitFonts.library.families, function(x) {
-        return {'id': x.id, 'family': x.name, 'source': 'typekit'};
-      });
-      var t2 = _.map(googleFonts.items, function(x) {
-        return {'id': x.family, 'family':x.family, 'source':'google'};
-      });
-      return reply(res, 200, t1.concat(t2));
+    if (stat && stat.isFile()) {
+      return res.sendfile(__dirname + '/fonts.json');
     }
-  }
+
+    var googleApiUrl = 'https://www.googleapis.com/webfonts/v1/webfonts?key=';
+    var typeKitApiUrl = 'https://typekit.com/api/v1/json/libraries/full?per_page=500';
+
+    var googleFonts = null;
+    var typekitFonts = null;
+
+    r.get({url: googleApiUrl + config.googleApiKey}, function(err, resp, body) {
+      googleFonts = body;
+      complete();
+    });
+
+    r.get({url: typeKitApiUrl}, function (err, resp, body) {
+      typekitFonts = body;
+      complete();
+    });
+
+    function complete() {
+      if (googleFonts && typekitFonts) {
+        var t1 = _.map(typekitFonts.library.families, function(x) {
+          return {'id': x.id, 'family': x.name, 'source': 'typekit'};
+        });
+        var t2 = _.map(googleFonts.items, function(x) {
+          return {'id': x.family, 'family':x.family, 'source':'google'};
+        });
+
+        var result = t1.concat(t2);
+
+        fs.writeFile(__dirname + '/fonts.json', JSON.stringify(result), function(err) {
+          if (!err) {
+            console.log('saved font cache');
+          }
+        });
+
+        return reply(res, 200, result);
+      }
+    }
+
+  });
 });
 
 

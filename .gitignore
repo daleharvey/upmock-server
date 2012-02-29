@@ -1,5 +1,6 @@
 .DS_Store
 config.json
 chromedriver.log
+fonts.json
 
 tests/selenium-screenshots/results
