@@ -82,7 +82,18 @@ app.get('/fonts/', function(_err, res) {
         var t2 = _.map(googleFonts.items, function(x) {
           return {'id': x.family, 'family':x.family, 'source':'google'};
         });
-        var result = t1.concat(t2);
+
+        var result = t1.concat(t2).sort(function(a, b) {
+          var nameA = a.family.toLowerCase();
+          var nameB = b.family.toLowerCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
 
         fs.writeFile(__dirname + '/fonts.json', JSON.stringify(result), function(err) {
           if (!err) {
