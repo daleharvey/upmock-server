@@ -51,7 +51,6 @@ app.get('/earlybird', function(_, res) {
   renderIndex(res, '/views/earlybird.tpl', {});
 });
 
-
 app.get('/fonts/', function(_err, res) {
 
   fs.stat(__dirname + '/fonts.json',  function (stat_error, stat) {
@@ -61,7 +60,6 @@ app.get('/fonts/', function(_err, res) {
     }
 
     var googleApiUrl = 'https://www.googleapis.com/webfonts/v1/webfonts?key=';
-    var typeKitApiUrl = 'https://typekit.com/api/v1/json/libraries/full?per_page=500';
 
     var googleFonts = null;
     var typekitFonts = null;
@@ -71,20 +69,19 @@ app.get('/fonts/', function(_err, res) {
       complete();
     });
 
-    r.get({url: typeKitApiUrl}, function (err, resp, body) {
-      typekitFonts = body;
+    fetchTypeKit(1, [], function(data) {
+      typekitFonts = data;
       complete();
     });
 
     function complete() {
       if (googleFonts && typekitFonts) {
-        var t1 = _.map(typekitFonts.library.families, function(x) {
+        var t1 = _.map(typekitFonts, function(x) {
           return {'id': x.id, 'family': x.name, 'source': 'typekit'};
         });
         var t2 = _.map(googleFonts.items, function(x) {
           return {'id': x.family, 'family':x.family, 'source':'google'};
         });
-
         var result = t1.concat(t2);
 
         fs.writeFile(__dirname + '/fonts.json', JSON.stringify(result), function(err) {
@@ -287,6 +284,19 @@ function renderIndex(res, content, tpldata) {
   });
 }
 
+
+// Type kit doesnt let us just fetch all the data in one request
+function fetchTypeKit(page, data, complete) {
+  var typeKitApiUrl = 'https://typekit.com/api/v1/json/libraries/full?per_page=500';
+  r.get({url: typeKitApiUrl + '&page=' + page}, function (err, resp, body) {
+    data = data.concat(body.library.families);
+    if (body.library.pagination.page_count > page) {
+      fetchTypeKit(page + 1, data, complete);
+    } else {
+      complete(data);
+    }
+  });
+}
 
 function reply(client, status, content, hdrs) {
   var headers = _.extend({'Content-Type': 'application/json'}, hdrs);
