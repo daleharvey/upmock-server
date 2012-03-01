@@ -83,7 +83,9 @@ app.get('/fonts/', function(_err, res) {
           return {'id': x.family, 'family':x.family, 'source':'google'};
         });
 
-        var result = t1.concat(t2).sort(function(a, b) {
+        var result = _.uniq(t1.concat(t2), false, function(x) {
+          return x.family;
+        }).sort(function(a, b) {
           var nameA = a.family.toLowerCase();
           var nameB = b.family.toLowerCase();
           if (nameA < nameB) {
