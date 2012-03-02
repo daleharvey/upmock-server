@@ -1,0 +1,19 @@
+CACHE MANIFEST
+# 2012-03-01:v1
+
+CACHE:
+/favicon.ico
+/upmock-client/index.html
+/upmock-client/js
+/upmock-client/css
+/upmock-client/img
+/js
+/style
+
+# Resources that require the user to be online.
+NETWORK:
+/couch
+/fonts
+
+FALLBACK:
+/user/*/* index.html
